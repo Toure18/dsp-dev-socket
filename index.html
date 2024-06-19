@@ -74,10 +74,11 @@
     form.addEventListener('submit', (e) => {
       e.preventDefault();
       if (input.value) {
-        socket.emit('SMessage', input.value);
+        socket.emit('SMessage', input.value, {url: url, msg: input.value});
         input.value = '';
       }
     });
+
     socket.on('chat message', (msg) => {
       const item = document.createElement('li');
       item.textContent = msg;
@@ -99,6 +100,22 @@
             window.scrollTo(0, document.body.scrollHeight);
         });
     
+    // channel
+    const url  = window.location.pathname;
+    socket.emit('joinChannel', url)
+    socket.on('SmessageChannel', (data) => {
+            const item = document.createElement('li');
+            console.log(data)
+            item.textContent = data.msg;
+            if (data.id === socket.id) {
+                console.log(data.id)
+                item.style.color = 'blue'; 
+            } else {
+                item.style.color = 'lightBlue'; 
+            }
+            messages.appendChild(item);
+            window.scrollTo(0, document.body.scrollHeight);
+        });
 
   toggleButton.addEventListener('click', (e) => {
     e.preventDefault();
